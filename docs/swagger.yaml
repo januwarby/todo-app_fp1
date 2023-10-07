@@ -1,0 +1,241 @@
+definitions:
+  dto.DeleteTodoResponse:
+    properties:
+      message:
+        example: Todo with id 5 has been successfully deleted
+        type: string
+    type: object
+  dto.GetAllTodosResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dto.TodoData'
+        type: array
+      message:
+        example: success
+        type: string
+    type: object
+  dto.GetTodoByIDResponse:
+    properties:
+      data:
+        $ref: '#/definitions/dto.TodoDataDetailed'
+      message:
+        example: success
+        type: string
+    type: object
+  dto.NewTodoRequest:
+    properties:
+      completed:
+        example: false
+        type: boolean
+      title:
+        example: Belajar Golang
+        type: string
+    required:
+    - title
+    type: object
+  dto.NewTodoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/dto.NewTodoRequest'
+      message:
+        example: Todo with id 69 has been successfully created
+        type: string
+    type: object
+  dto.TodoData:
+    properties:
+      completed:
+        example: false
+        type: boolean
+      id:
+        example: 69
+        type: integer
+      title:
+        example: Ngoding
+        type: string
+    type: object
+  dto.TodoDataDetailed:
+    properties:
+      completed:
+        example: false
+        type: boolean
+      createdAt:
+        example: "2023-04-06T17:55:34.070213+07:00"
+        type: string
+      id:
+        example: 69
+        type: integer
+      title:
+        example: Ngoding
+        type: string
+      updatedAt:
+        example: "2023-04-06T17:55:34.070213+07:00"
+        type: string
+    type: object
+  errs.MessageErrData:
+    properties:
+      error:
+        example: BAD_REQUEST
+        type: string
+      message:
+        example: This is an error message
+        type: string
+      statusCode:
+        example: 400
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /todos:
+    get:
+      consumes:
+      - application/json
+      description: List todos
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetAllTodosResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errs.MessageErrData'
+      summary: Get all todos
+      tags:
+      - todos
+    post:
+      consumes:
+      - application/json
+      description: Create a todo by json
+      parameters:
+      - description: Create todo request body
+        in: body
+        name: todo
+        required: true
+        schema:
+          $ref: '#/definitions/dto.NewTodoRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.NewTodoResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/errs.MessageErrData'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errs.MessageErrData'
+      summary: Create a todo
+      tags:
+      - todos
+  /todos/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a todo by id
+      parameters:
+      - description: todo ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.DeleteTodoResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errs.MessageErrData'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errs.MessageErrData'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errs.MessageErrData'
+      summary: Delete todo
+      tags:
+      - todos
+    get:
+      consumes:
+      - application/json
+      description: Get a todo by id
+      parameters:
+      - description: Todo ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetTodoByIDResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errs.MessageErrData'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errs.MessageErrData'
+      summary: Get a todo
+      tags:
+      - todos
+    put:
+      consumes:
+      - application/json
+      description: Update a todo by json
+      parameters:
+      - description: Todo ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update todo request body
+        in: body
+        name: todo
+        required: true
+        schema:
+          $ref: '#/definitions/dto.NewTodoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetTodoByIDResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errs.MessageErrData'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errs.MessageErrData'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/errs.MessageErrData'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errs.MessageErrData'
+      summary: Update todo
+      tags:
+      - todos
+swagger: "2.0"
